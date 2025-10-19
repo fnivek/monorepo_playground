@@ -1,0 +1,41 @@
+monorepo = "ssh://git@github.com/fnivek/monorepo_playground.git"
+burger_repo = "ssh://git@github.com/fnivek/monorepo-burger-playground.git"
+
+core.workflow(
+    name = "pull",
+    origin = git.origin(
+        url = burger_repo,
+        ref = "main",
+    ),
+    destination = git.github_pr_destination(
+        url = monorepo,
+        destination_ref = "main",
+        pr_branch = "copybara/public-burger-builder",
+        title = "Copy changes from public-burger-builder",
+        body = "Changes from public-burger-builder.",
+        integrates = [],
+    ),
+    destination_files = glob(["public_burger_builder/**"]),
+    authoring = authoring.pass_thru("Kevin French <fnivek@gmail.com>"),
+    transformations = [
+        core.move("", "public_burger_builder"),
+    ],
+)
+
+core.workflow(
+    name = "push",
+    origin = git.origin(
+        url = monorepo,
+        ref = "main",
+    ),
+    destination = git.destination(
+        url = burger_repo,
+        fetch = "main",
+        push = "main",
+    ),
+    origin_files = glob(["public_burger_builder/**"]),
+    authoring = authoring.pass_thru("Kevin French <fnivek@gmail.com>"),
+    transformations = [
+        core.move("public_burger_builder", ""),
+    ],
+)
