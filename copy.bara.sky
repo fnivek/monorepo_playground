@@ -2,7 +2,7 @@ monorepo = "ssh://git@github.com/fnivek/monorepo_playground.git"
 burger_repo = "ssh://git@github.com/fnivek/monorepo-burger-playground.git"
 
 core.workflow(
-    name = "pull",
+    name = "pr",
     origin = git.origin(
         url = burger_repo,
         ref = "main",

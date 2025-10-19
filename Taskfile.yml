@@ -4,5 +4,14 @@ version: '3'
 
 tasks:
   update-flake-inputs:
+    desc: "Updates all flake inputs."
     cmds:
       - nix flake update
+  push-to-burger-builder:
+    desc: "Force push any changes on monorepo-playground/main to monorepo-burger-playground/main."
+    cmds:
+      - copybara --github-api-bearer-auth=true --nogit-prompt copy.bara.sky push
+  pr-from-burger-builder:
+    desc: "Make a pull request from any changes in monorepo-burger-playground/main to monorepo-playground/main."
+    cmds:
+      - copybara --github-api-bearer-auth=true --nogit-prompt copy.bara.sky pr
