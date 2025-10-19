@@ -1,19 +1,16 @@
 {
-  description = "An empty flake template that you can adapt to your own environment";
+  description = "Flake to build everything in the monorepo.";
 
-  # Flake inputs
   inputs = {
     # Unstable packages from nixpkgs.
-    nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     # Stable Nixpkgs from flake hub.
-    nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0";
+    flakehub.url = "https://flakehub.com/f/NixOS/nixpkgs/*";
   };
 
-  # Flake outputs
   outputs =
     { ... }@inputs:
     let
-      # The systems supported for this flake's outputs
       supportedSystems = [
         "x86_64-linux" # 64-bit Intel/AMD Linux
         "aarch64-linux" # 64-bit ARM Linux
@@ -24,16 +21,15 @@
       # Helper for providing system-specific attributes
       forEachSupportedSystem =
         f:
-        inputs.nixpkgs.lib.genAttrs supportedSystems (
+        inputs.flakehub.lib.genAttrs supportedSystems (
           system:
           f {
             # Provides a system-specific, configured Nixpkgs
-            pkgs = import inputs.nixpkgs {
+            pkgs-flake = import inputs.flakehub {
               inherit system;
-              # Enable using unfree packages
               config.allowUnfree = true;
             };
-            pkgs-unstable = import inputs.nixpkgs-unstable {
+            pkgs-nix = import inputs.nixpkgs {
               inherit system;
               config.allowUnfree = true;
             };
@@ -43,15 +39,16 @@
     {
       # Development environments output by this flake
       devShells = forEachSupportedSystem (
-        { pkgs, pkgs-unstable }:
+        { pkgs-flake, pkgs-nix }:
         {
           # Run `nix develop` to activate this environment or `direnv allow` if you have direnv installed
-          default = pkgs.mkShell {
+          default = pkgs-flake.mkShell {
             # The Nix packages provided in the environment
-            packages = with pkgs; [
+            packages = with pkgs-flake; [
               # Version control
               git
-              pkgs-unstable.copybara
+              gh
+              pkgs-nix.copybara
 
               # Language servers.
               helix
