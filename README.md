@@ -1,4 +1,6 @@
 # A playground for me to test the concepts of a monorepo.
+[![Lint](https://github.com/fnivek/monorepo_playground/actions/workflows/ci.yml/badge.svg)](https://github.com/fnivek/monorepo_playground/actions/workflows/ci.yml)
+
 ## Copybara Setup
 ### Github Authentication
 Copybara needs credentials for github rest apis.
