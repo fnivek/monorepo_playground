@@ -15,3 +15,7 @@ tasks:
     desc: "Make a pull request from any changes in monorepo-burger-playground/main to monorepo-playground/main."
     cmds:
       - copybara --github-api-bearer-auth=true --nogit-prompt copy.bara.sky pr
+  validate-copybara:
+    desc: "Ensures the copy.bara.sky file is valid."
+    cmds:
+      - copybara validate copy.bara.sky
